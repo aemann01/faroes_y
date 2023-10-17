@@ -1,0 +1,138 @@
+#################################
+# Load required libraries
+#################################
+library(shiny)
+library(dplyr)
+library(ggplot2)
+library(bslib)
+#################################
+# User interface
+#################################
+ui <- fluidPage(
+  titlePanel("Mutational Distance from the Modal Haplotype"),
+  sidebarLayout(
+    sidebarPanel(
+      fileInput("myfileinput", "Input CSV file", 
+      	accept = "text/csv",
+      	placeholder = "No file selected"),
+      checkboxInput("header", "Header", TRUE),
+      selectInput("populationselect", 
+      	label = "Population", 
+      	choice=character(0)),
+      selectInput("haplogroupselect", 
+      	label = "Haplogroup", 
+      	choice=character(0)),
+      downloadButton("downloadPlot", "Download pdf")
+    ),
+
+    mainPanel(
+		h3(textOutput("caption")),
+		plotOutput("plotview"),
+		dataTableOutput("modehap")
+
+    )
+  )
+)
+#################################
+# Server instance
+#################################
+server <- function(input, output, session) {
+	#Reactive to store loaded data
+	reactives <- reactiveValues(       
+        mydata = NULL      
+    	) 
+	# Output
+	formulaText <- reactive({
+		paste(input$populationselect, input$haplogroupselect)
+		})
+	# Return the formula text for printing as a caption ----
+	output$caption <- renderText({
+		formulaText()
+		})
+	#Observe file being selected
+	observeEvent(input$myfileinput, {    
+		#Store loaded data in reactive
+		reactives$mydata <- read.csv(file = input$myfileinput$datapath)
+		#Update select input
+		updateSelectInput(session, 
+			inputId = 'populationselect', 
+			label = 'Population', 
+			choices  = reactives$mydata$Pop)
+		updateSelectInput(session, 
+			inputId = 'haplogroupselect', 
+			label = 'Haplogroup', 
+			choices  = reactives$mydata$HG) 
+		})
+    # save data as a dataframe
+    mydata <- reactive({
+		req(input$myfileinput, input$header, file.exists(input$myfileinput$datapath))
+		read.csv(input$myfileinput$datapath, header = input$header)
+		})
+	##########
+	# Plot
+	##########
+	hgplot <- reactive({
+
+
+	# pull data selected by user from dataframe
+		hgsplit <- mydata() %>% 
+			filter(Pop == input$populationselect & HG == input$haplogroupselect)
+
+
+		# remove any columns with missing values, get label for mutational distance histogram
+		dat <- hgsplit[,colSums(is.na(hgsplit)) == 0]
+		# only include numeric columns for downstream processing
+		dat <- select_if(dat, is.numeric)
+		subxlab <- paste("(n = ", dim(dat)[1], ")", sep="")
+		# function to calculate modal value 
+		getmode <- function(v) {
+			uniqv <- unique(v)
+			uniqv[which.max(tabulate(match(v, uniqv)))]
+		}
+		# find modal value across all columns
+		mode <- sapply(as.data.frame(dat), function(x) getmode(x))
+		mode
+		# empty vector to populate intragroup mutational distance scores  
+		x <- c()
+		# calculate number of mutations from modal haplotype 
+		for(row in 1:nrow(dat)){
+			temp <- rbind(dat[row,], mode) 
+			temp <- temp - as.list(temp[1,])
+			x <- c(x, sum(abs(temp[2,])))
+		}
+		# save as dataframe for plotting
+		x <- as.data.frame(x)
+
+		# plot
+		hgplot <- ggplot(x, aes(x=x)) + 
+			geom_histogram(aes(y=after_stat(density)), 
+				binwidth=1, 
+				colour="white", 
+				fill="grey") + 
+			theme_minimal() + 
+			xlab(paste("Mutational steps from mode", subxlab)) + 
+			ylab("Frequency") + 
+			geom_density(bw=1, lty=2)
+		hgplot
+		})
+	# output object to print the modal haplotype
+	output$modehap <- renderDataTable({as.data.frame(mode())})
+	# output object to view the plot
+	output$plotview <- renderPlot({hgplot()})
+	# download the plot    
+ 	output$downloadPlot <- downloadHandler(
+    filename = function(){
+    	paste(input$populationselect, input$haplogroupselect, ".pdf", sep="")
+    	},
+    content = function(file) {
+      pdf(file)
+      print(hgplot())
+      dev.off()
+    }
+  )
+
+}
+#################################
+# Launch app
+#################################
+shinyApp(ui, server)

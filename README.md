@@ -1,3 +1,5 @@
+# faroes_y
+
 ## Faroes project mutational distance from modal haplotype
 
 ```R
@@ -72,4 +74,4 @@ runApp("/Users/mann/github/faroes_y/mdmHistogram")
 library(rsconnect)
 rsconnect::deployApp("/Users/mann/github/faroes_y/mdmHistogram/")
 ```
-# faroes_y
+
