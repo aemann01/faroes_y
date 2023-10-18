@@ -193,7 +193,7 @@ populationPlot <- reactive({
 	# output object to print the modal haplotype
 	output$modeout <- renderDataTable({
 		temp <- as.data.frame(cbind(rownames(as.data.frame(modehap())), modehap()))
-		colnames(temp) <- c("Locus", "Repeat Number")
+		colnames(temp) <- c("Locus", "Repeat Count")
 		temp
 		})
 	# output object to view the plot
