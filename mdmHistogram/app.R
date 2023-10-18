@@ -25,7 +25,9 @@ ui <- fluidPage(
       selectInput("haplogroupselect", 
       	label = "Haplogroup", 
       	choice=character(0)),
+      a(href="example_data.csv", "Download example data", download=NA, target="_blank"),
       downloadButton("downloadPlot", "Download pdf")
+
     ),
 
     mainPanel(
