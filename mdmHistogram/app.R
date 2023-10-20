@@ -5,18 +5,25 @@ library(shiny)
 library(dplyr)
 library(ggplot2)
 library(bslib)
+library(shinythemes)
 
 ## TO DO: Percent "neighbor haplotypes" for each group
 
 #################################
 # User interface
 #################################
-ui <- fluidPage(
+ui <- fluidPage(theme = shinytheme('yeti'),
   titlePanel("MDM Calculator"),
-  "This calculator requires your input to be comma separated with a .csv extension. 
-  Input data file needs to have two columns: 
-  one with the haplogroup information called HG and another with population information called Pop. See example data
-  for exact format.",
+    br(),
+  "Assuming a stepwise mutation model, mutational distances from the calculated
+  modal haplotype (MDM) is defined as the sum of the absolute number of repeat differences
+  at each locus that an individual haplotype deviates from the population-specific modal
+  haplotype within a particular haplogroup. MDM from the global modal haplotype takes on the same
+  assumptions but calculates the modal haplotype from all input haplotypes. Input data must
+  have two columns: HG indicating haplogroups and Pop indicating population. See example data for 
+  exact data format.",
+      br(),
+      br(),
   sidebarLayout(
     sidebarPanel(
       fileInput("myfileinput", "Input CSV file", 
@@ -29,19 +36,29 @@ ui <- fluidPage(
       selectInput("haplogroupselect", 
       	label = "Haplogroup", 
       	choice=character(0)),
+      downloadButton("downloadPlot", "Download pdf"),
+      br(),
+      br(),
       a(href="example_data.csv", "Download example data", download=NA, target="_blank"),
-      downloadButton("downloadPlot", "Download pdf")
+      br(),
+      a(href="", "Read the paper")
 
     ),
 
     mainPanel(
-		h3(textOutput("caption")),
-		plotOutput("plotview"),
-		h3("Modal haplotype"),
-		dataTableOutput("modeout"),
-		h3("MDM from global modal haplotype"),
-		plotOutput("popplot")
 
+    	tabsetPanel(type = "tabs",
+    		tabPanel("MDM Plot", 
+    			h3(textOutput("caption")),
+    			plotOutput("plotview")),
+    		tabPanel("Modal haplotype", 
+    			h3("Modal haplotype"), 
+    			dataTableOutput("modeout")),
+    		tabPanel("Global MDM",
+					h3("MDM from global modal haplotype"),
+					plotOutput("popplot")
+    			)
+    		)
     )
   )
 )
