@@ -5,6 +5,9 @@ library(shiny)
 library(dplyr)
 library(ggplot2)
 library(bslib)
+
+## TO DO: Percent "neighbor haplotypes" for each group
+
 #################################
 # User interface
 #################################
@@ -12,7 +15,8 @@ ui <- fluidPage(
   titlePanel("MDM Calculator"),
   "This calculator requires your input to be comma separated with a .csv extension. 
   Input data file needs to have two columns: 
-  one with the haplogroup information called HG and another with population information called Pop",
+  one with the haplogroup information called HG and another with population information called Pop. See example data
+  for exact format.",
   sidebarLayout(
     sidebarPanel(
       fileInput("myfileinput", "Input CSV file", 
@@ -33,9 +37,9 @@ ui <- fluidPage(
     mainPanel(
 		h3(textOutput("caption")),
 		plotOutput("plotview"),
-		h3("Population specific modal haplotype"),
+		h3("Modal haplotype"),
 		dataTableOutput("modeout"),
-		h3("Population distance from global modal haplotype"),
+		h3("MDM from global modal haplotype"),
 		plotOutput("popplot")
 
     )
@@ -174,7 +178,7 @@ populationPlot <- reactive({
 		}
 		# save as dataframe for plotting
 		x <- as.data.frame(cbind(Population, x))
-		ggplot(x, aes(x=x, group=Population, colour=Population)) + 
+		ggplot(x, aes(x=as.numeric(x), group=Population, colour=Population)) + 
 		geom_density() +
 		theme_minimal() +
 		xlab(paste("Mutational steps from mode", subxlab)) +
