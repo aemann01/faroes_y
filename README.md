@@ -79,3 +79,15 @@ library(rsconnect)
 rsconnect::deployApp("/Users/mann/github/faroes_y/mdmHistogram/")
 ```
 
+Haplogroup frequency figure remake
+
+```R
+library(ggplot2)
+
+dat <- read.table("faroes_hg_data.csv", sep=",", header=T, row.names=1)
+
+
+
+
+```
+

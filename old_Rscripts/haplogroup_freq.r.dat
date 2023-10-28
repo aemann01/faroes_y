@@ -1,0 +1,19 @@
+setwd("/home/allison/Dropbox/Thesis Documents/Data & Methods/R scripts")
+
+HaplogroupFrequencies <- read.table("Haplogroup_frequencies.csv", header=TRUE, row.names=1, sep=";")
+
+library(reshape2)
+library(ggplot2)
+library(scales)
+
+HaplogroupFrequencies <- melt(cbind(HaplogroupFrequencies, ind = rownames(HaplogroupFrequencies)), is.vars = c('Haplogroup'))
+
+ggplot(HaplogroupFrequencies,aes(x=variable, y=value, fill=ind))+geom_bar(position="fill")+scale_y_continuous(labels=percent_format())+scale_fill_grey("")+xlab("")+opts(title= "Haplogroup Frequency")+opts(axis.title.y=theme_blank())
+
+pdf("/home/allison/Dropbox/Christopher2Allie/AJPA Manuscript/ManuHierarchy/Figures/HG_freq.pdf")
+
+HaplogroupFrequencies <- melt(cbind(HaplogroupFrequencies, ind = rownames(HaplogroupFrequencies)), is.vars = c('Haplogroup'))
+
+ggplot(HaplogroupFrequencies,aes(x=variable, y=value, fill=ind))+geom_bar(position="fill")+scale_y_continuous(labels=percent_format())+scale_fill_grey("")+xlab("")+opts(title= "Haplogroup Frequency")+opts(axis.title.y=theme_blank())
+
+dev.off()

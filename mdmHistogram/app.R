@@ -6,8 +6,7 @@ library(dplyr)
 library(ggplot2)
 library(bslib)
 library(shinythemes)
-
-## TO DO: Percent "neighbor haplotypes" for each group
+library(DT)
 
 #################################
 # User interface
@@ -40,9 +39,6 @@ ui <- fluidPage(theme = shinytheme('yeti'),
       br(),
       br(),
       a(href="example_data.csv", "Download example data", download=NA, target="_blank"),
-      br(),
-      a(href="", "Read the paper")
-
     ),
 
     mainPanel(
@@ -50,10 +46,13 @@ ui <- fluidPage(theme = shinytheme('yeti'),
     	tabsetPanel(type = "tabs",
     		tabPanel("MDM Plot", 
     			h3(textOutput("caption")),
-    			plotOutput("plotview")),
+    			plotOutput("plotview"),
+    			dataTableOutput("neighbors")
+    			),
     		tabPanel("Modal haplotype", 
     			h3("Modal haplotype"), 
-    			dataTableOutput("modeout")),
+    			dataTableOutput("modeout")
+    			),
     		tabPanel("Global MDM",
 					h3("MDM from global modal haplotype"),
 					plotOutput("popplot")
@@ -162,6 +161,13 @@ server <- function(input, output, session) {
 		})
 
 #################################
+# Neighbor haplotypes Function
+#################################
+		neighbors <- reactive({
+			prop.table(table(mdm() == 1))
+			})
+
+#################################
 # All Populations Density Plot 
 #################################
 populationPlot <- reactive({
@@ -218,6 +224,13 @@ populationPlot <- reactive({
 		temp <- as.data.frame(cbind(rownames(as.data.frame(modehap())), modehap()))
 		colnames(temp) <- c("Locus", "Repeat Count")
 		temp
+		})
+	# output object to print neighbor haplotypes
+	output$neighbors <- renderDataTable({
+		datatable(as.data.frame(neighbors()),
+			caption = "Proportion Neighbor Haplotypes (MDM = 1)",
+			rownames = FALSE, 
+			colnames = c("Is.neighbor", "Frequency"))
 		})
 	# output object to view the plot
 	output$plotview <- renderPlot({hgplot()})

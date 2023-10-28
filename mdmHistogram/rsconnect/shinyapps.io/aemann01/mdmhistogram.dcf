@@ -5,6 +5,6 @@ account: aemann01
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 10207892
-bundleId: 7829632
+bundleId: 7839607
 url: https://aemann01.shinyapps.io/mdmhistogram/
 version: 1

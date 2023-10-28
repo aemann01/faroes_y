@@ -1,0 +1,171 @@
+#Faroes Neighbor Haplotype Data
+
+R1a_Network_Neighbor_Hap <- c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,
+2,2,3,4,4,4,4,5,6)
+
+hist(R1a_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Faroes R1a Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/R1a_Network_Neighbor_Hap.pdf")
+
+hist(R1a_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Faroes R1a Network Neighbor Haplotypes")
+
+dev.off()
+
+
+R1b_Network_Neighbor_Hap <- c(0,0,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,4,4,5,6,6,6,6,6,6,6,6,7)
+
+hist(R1b_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Faroes R1b Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/R1b_Network_Neighbor_Hap.pdf")
+
+hist(R1b_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Faroes R1b Network Neighbor Haplotypes")
+
+dev.off()
+
+
+I1_Network_Neighbor_Hap <- c(0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,5)
+
+hist(I1_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Faroes I1 Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/I1_Network_Neighbor_Hap.pdf")
+
+hist(I1_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Faroes I1 Network Neighbor Haplotypes")
+
+dev.off()
+
+
+
+
+
+
+
+#Danish Neighbor Haplotype Data
+
+R1a_DN_Network_Neighbor_Hap <- c(0,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,4,4,4,5,5,6,9)
+
+hist(R1a_DN_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Danish R1a Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/R1a_DN_Network_Neighbor_Hap.pdf")
+
+hist(R1a_DN_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Danish R1a Network Neighbor Haplotypes")
+
+dev.off()
+
+
+R1b_DN_Network_Neighbor_Hap <- c(0,0,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,
+6,6,6,6,6,6,6,7,7,7,8,8,8,8,8,8,8,9,9,10,10,10,10,11)
+
+hist(R1b_DN_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Danish R1b Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/R1b_DN_Network_Neighbor_Hap.pdf")
+
+hist(R1b_DN_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Danish R1b Network Neighbor Haplotypes")
+
+dev.off()
+
+
+I1_DN_Network_Neighbor_Hap <- c(0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,5,5,5,5,5,5,5,5,5,5,6,6,6,6,7,7,7,
+7,8,8,8,9,9,9)
+
+hist(I1_DN_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Danish I1 Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/I1_DN_Network_Neighbor_Hap.pdf")
+
+hist(I1_DN_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Danish I1 Network Neighbor Haplotypes")
+
+dev.off()
+
+
+
+
+
+#Irish Neighbor Haplotype Data
+
+R1b_IR_Network_Neighbor_Hap <- c(0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,11)
+
+hist(R1b_IR_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Irish R1b Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/R1b_IR_Network_Neighbor_Hap.pdf")
+
+hist(R1b_IR_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Irish R1b Network Neighbor Haplotypes")
+
+dev.off()
+
+
+I1_IR_Network_Neighbor_Hap <- c(0,2,2,2,3,4)
+
+hist(I1_IR_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Irish I1 Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/I1_IR_Network_Neighbor_Hap.pdf")
+
+hist(I1_IR_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Irish I1 Network Neighbor Haplotypes")
+
+dev.off()
+
+
+
+
+
+#Icelandic Neighbor Haplotype Data
+
+R1a_ICE_Network_Neighbor_Hap <- c(0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4,4,4,5)
+
+hist(R1a_ICE_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Iceland R1a Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/R1a_ICE_Network_Neighbor_Hap")
+
+hist(R1a_ICE_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Iceland R1a Network Neighbor Haplotypes")
+
+dev.off()
+
+R1b_ICE_Network_Neighbor_Hap <- c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4
+,4,4,4,4,5,5,5,5,6,6,7,7,9,9,9,9,9,9,10,10,11,12)
+
+hist(R1b_ICE_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Iceland R1b Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/R1b_ICE_Network_Neighbor_Hap.pdf")
+
+hist(R1b_ICE_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Iceland R1b Network Neighbor Haplotypes")
+
+dev.off()
+
+
+I1_ICE_Network_Neighbor_Hap <- c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,3,3,3,4,4,
+4,4,5,5,5,6,6,7,7,8,9,10)
+
+hist(I1_ICE_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Iceland I1 Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/I1_ICE_Network_Neighbor_Hap.pdf")
+
+hist(I1_ICE_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Iceland I1 Network Neighbor Haplotypes")
+
+dev.off()
+
+
+
+
+
+#Norse Neighbor Haplotype Data
+
+R1a_NOR_Network_Neighbor_Hap <- c(0,3,4,6,6,7,7,8,8,9,11)
+
+hist(R1a_NOR_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Norse R1a Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/R1a_NOR_Network_Neighbor_Hap.pdf")
+
+hist(R1a_NOR_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Norse R1a Network Neighbor Haplotypes")
+
+dev.off()
+
+R1b_NOR_Network_Neighbor_Hap <- c(0,0,1,1,1,2,2,2,2,2,3,3,4,4,4)
+
+hist(R1b_NOR_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Norse R1b Network Neighbor Haplotypes")
+
+pdf("/home/allison/Dropbox/Thesis Documents/Images/R1b_NOR_Network_Neighbor_Hap.pdf")
+
+hist(R1b_NOR_Network_Neighbor_Hap, xlab="Number of mutational steps from modal haplotype", main="Norse R1b Network Neighbor Haplotypes")
+
+dev.off()
+
+
