@@ -7,6 +7,11 @@ library(ggplot2)
 library(bslib)
 library(shinythemes)
 library(DT)
+library(devtools)
+library(pairwiseAdonis)
+library(pegas)
+library(poppr)
+library(vegan)
 
 #################################
 # User interface
@@ -35,6 +40,9 @@ ui <- fluidPage(theme = shinytheme('yeti'),
       selectInput("haplogroupselect", 
       	label = "Haplogroup", 
       	choice=character(0)),
+      selectInput("test", 
+      	label = "test", 
+      	choice=character(0)),
       downloadButton("downloadPlot", "Download pdf"),
       br(),
       br(),
@@ -56,7 +64,12 @@ ui <- fluidPage(theme = shinytheme('yeti'),
     		tabPanel("Global MDM",
 					h3("MDM from global modal haplotype"),
 					plotOutput("popplot")
-    			)
+    			),
+    		tabPanel("PCoA", 
+    			h3("PCoA"), 
+    			plotOutput("pcoa"),
+    			dataTableOutput("perma")
+    			),
     		)
     )
   )
@@ -83,6 +96,9 @@ server <- function(input, output, session) {
 			inputId = 'haplogroupselect', 
 			label = 'Haplogroup', 
 			choices  = reactives$mydata$HG) 
+		updateSelectInput(session, 
+			inputId = 'test', 
+			label = 'test') 
 		})
 
 #################################
@@ -202,12 +218,45 @@ populationPlot <- reactive({
 		# save as dataframe for plotting
 		x <- as.data.frame(cbind(Population, x))
 		ggplot(x, aes(x=as.numeric(x), group=Population, colour=Population)) + 
-		geom_density() +
+		geom_density(alpha=0.5) +
 		theme_minimal() +
 		xlab(paste("Mutational steps from mode", subxlab)) +
 		ylab("frequency")
 		})
 
+#################################
+# PCoA Plot Function
+#################################
+		pcoa <- reactive({
+			# pull data selected by user from dataframe
+			hgsplit <- mydata() %>% 
+				filter(HG == input$haplogroupselect)
+			haps <- df2genind(hgsplit, sep="\t", pop=hgsplit$Pop, ploidy=1)
+			haps <- missingno(haps, type="loci")
+			# for now assume all loci are quadnucleotide repeats for testing
+			ssr <- rep(4, nLoc(haps))
+			haps.pcoa.col <- rainbow(length(levels(pop(haps))))
+			haps.pcoa.bruvo <- dudi.pco(d=bruvo.dist(pop=haps, replen=ssr), scannf=FALSE, nf=3)
+			s.class(dfxy=haps.pcoa.bruvo$li, fac=pop(haps), col=haps.pcoa.col)
+			add.scatter.eig(haps.pcoa.bruvo$eig, posi="bottomright", 3,1,2)
+			})
+
+#################################
+# PERMANOVA
+#################################
+	perma <- reactive({
+		# pull data selected by user from dataframe
+		hgsplit <- mydata() %>% 
+			filter(HG == input$haplogroupselect)
+		haps <- df2genind(hgsplit, sep="\t", pop=hgsplit$Pop, ploidy=1)
+		haps <- missingno(haps, type="loci")
+		# for now assume all loci are quadnucleotide repeats for testing
+		ssr <- rep(4, nLoc(haps))
+		# permanova analysis
+		bdist <- bruvo.dist(haps, replen=ssr)
+		permares <- as.data.frame(pairwise.adonis(bdist, hgsplit$Pop))
+		permares
+		})
 
 #################################
 # Outputs
@@ -232,9 +281,15 @@ populationPlot <- reactive({
 			rownames = FALSE, 
 			colnames = c("Is.neighbor", "Frequency"))
 		})
+
+	# Return results from permanova analysis
+	output$perma <- renderDataTable({
+		datatable(as.data.frame(perma()))
+		})
 	# output object to view the plot
 	output$plotview <- renderPlot({hgplot()})
 	output$popplot <- renderPlot({populationPlot()})
+	output$pcoa <- renderPlot({pcoa()})
 	# download the plot    
  	output$downloadPlot <- downloadHandler(
     filename = function(){
