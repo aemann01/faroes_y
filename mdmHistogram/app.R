@@ -40,9 +40,6 @@ ui <- fluidPage(theme = shinytheme('yeti'),
       selectInput("haplogroupselect", 
       	label = "Haplogroup", 
       	choice=character(0)),
-      selectInput("test", 
-      	label = "test", 
-      	choice=character(0)),
       downloadButton("downloadPlot", "Download pdf"),
       br(),
       br(),
@@ -180,7 +177,7 @@ server <- function(input, output, session) {
 # Neighbor haplotypes Function
 #################################
 		neighbors <- reactive({
-			prop.table(table(mdm() == 1))
+			prop.table(table(mdm() <= 1))
 			})
 
 #################################
@@ -231,15 +228,17 @@ populationPlot <- reactive({
 			# pull data selected by user from dataframe
 			hgsplit <- mydata() %>% 
 				filter(HG == input$haplogroupselect)
-			haps <- df2genind(hgsplit, sep="\t", pop=hgsplit$Pop, ploidy=1)
-			haps <- missingno(haps, type="loci")
-			# for now assume all loci are quadnucleotide repeats for testing
-			ssr <- rep(4, nLoc(haps))
-			haps.pcoa.col <- rainbow(length(levels(pop(haps))))
-			haps.pcoa.bruvo <- dudi.pco(d=bruvo.dist(pop=haps, replen=ssr), scannf=FALSE, nf=3)
-			s.class(dfxy=haps.pcoa.bruvo$li, fac=pop(haps), col=haps.pcoa.col)
-			add.scatter.eig(haps.pcoa.bruvo$eig, posi="bottomright", 3,1,2)
+			groups <- df2genind(hgsplit, sep="\t", pop=hgsplit$Pop, ploidy=1)
+			# make sure there are no missing data
+			groups <- missingno(groups, type="loci")
+			# generate genpop object
+			obj <- genind2genpop(groups)
+			ca1 <- dudi.coa(as.data.frame(obj$tab), scannf=FALSE, nf=3)
+			barplot(ca1$eig, main="Eigenvalues")
+			s.label(ca1$li, csub = 2, sub="CA 1-2")
+			add.scatter.eig(ca1$eig, nf = 3, xax = 1, yax = 2, posi = "bottomright")
 			})
+
 
 #################################
 # PERMANOVA
@@ -277,7 +276,7 @@ populationPlot <- reactive({
 	# output object to print neighbor haplotypes
 	output$neighbors <- renderDataTable({
 		datatable(as.data.frame(neighbors()),
-			caption = "Proportion Neighbor Haplotypes (MDM = 1)",
+			caption = "Proportion Neighbor Haplotypes (MDM <= 1)",
 			rownames = FALSE, 
 			colnames = c("Is.neighbor", "Frequency"))
 		})
