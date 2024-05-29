@@ -8,10 +8,8 @@ library(bslib)
 library(shinythemes)
 library(DT)
 library(devtools)
-library(pairwiseAdonis)
-library(pegas)
-library(poppr)
 library(vegan)
+library(moments)
 
 #################################
 # User interface
@@ -61,11 +59,6 @@ ui <- fluidPage(theme = shinytheme('yeti'),
     		tabPanel("Global MDM",
 					h3("MDM from global modal haplotype"),
 					plotOutput("popplot")
-    			),
-    		tabPanel("PCoA", 
-    			h3("PCoA"), 
-    			plotOutput("pcoa"),
-    			dataTableOutput("perma")
     			),
     		)
     )
@@ -160,6 +153,7 @@ server <- function(input, output, session) {
 # MDM Histogram Function
 #################################
 	hgplot <- reactive({
+		kurt <- round(skewness(mdm()),2)
 		# plot
 		hgplot <- ggplot(mdm(), aes(x=x)) + 
 			geom_histogram(aes(y=after_stat(density)), 
@@ -167,6 +161,7 @@ server <- function(input, output, session) {
 				colour="white", 
 				fill="grey") + 
 			theme_minimal() + 
+			ggtitle(paste("Skewness: ", kurt)) +
 			xlab(paste("Mutational steps from mode", subxlab())) + 
 			ylab("Frequency") + 
 			geom_density(bw=1, lty=2)
@@ -221,41 +216,41 @@ populationPlot <- reactive({
 		ylab("frequency")
 		})
 
-#################################
-# PCoA Plot Function
-#################################
-		pcoa <- reactive({
-			# pull data selected by user from dataframe
-			hgsplit <- mydata() %>% 
-				filter(HG == input$haplogroupselect)
-			groups <- df2genind(hgsplit, sep="\t", pop=hgsplit$Pop, ploidy=1)
-			# make sure there are no missing data
-			groups <- missingno(groups, type="loci")
-			# generate genpop object
-			obj <- genind2genpop(groups)
-			ca1 <- dudi.coa(as.data.frame(obj$tab), scannf=FALSE, nf=3)
-			barplot(ca1$eig, main="Eigenvalues")
-			s.label(ca1$li, csub = 2, sub="CA 1-2")
-			add.scatter.eig(ca1$eig, nf = 3, xax = 1, yax = 2, posi = "bottomright")
-			})
+# #################################
+# # PCoA Plot Function
+# #################################
+# 		pcoa <- reactive({
+# 			# pull data selected by user from dataframe
+# 			hgsplit <- mydata() %>% 
+# 				filter(HG == input$haplogroupselect)
+# 			groups <- df2genind(hgsplit, sep="\t", pop=hgsplit$Pop, ploidy=1)
+# 			# make sure there are no missing data
+# 			groups <- missingno(groups, type="loci")
+# 			# generate genpop object
+# 			obj <- genind2genpop(groups)
+# 			ca1 <- dudi.coa(as.data.frame(obj$tab), scannf=FALSE, nf=3)
+# 			barplot(ca1$eig, main="Eigenvalues")
+# 			s.label(ca1$li, csub = 2, sub="CA 1-2")
+# 			add.scatter.eig(ca1$eig, nf = 3, xax = 1, yax = 2, posi = "bottomright")
+# 			})
 
 
-#################################
-# PERMANOVA
-#################################
-	perma <- reactive({
-		# pull data selected by user from dataframe
-		hgsplit <- mydata() %>% 
-			filter(HG == input$haplogroupselect)
-		haps <- df2genind(hgsplit, sep="\t", pop=hgsplit$Pop, ploidy=1)
-		haps <- missingno(haps, type="loci")
-		# for now assume all loci are quadnucleotide repeats for testing
-		ssr <- rep(4, nLoc(haps))
-		# permanova analysis
-		bdist <- bruvo.dist(haps, replen=ssr)
-		permares <- as.data.frame(pairwise.adonis(bdist, hgsplit$Pop))
-		permares
-		})
+# #################################
+# # PERMANOVA
+# #################################
+# 	perma <- reactive({
+# 		# pull data selected by user from dataframe
+# 		hgsplit <- mydata() %>% 
+# 			filter(HG == input$haplogroupselect)
+# 		haps <- df2genind(hgsplit, sep="\t", pop=hgsplit$Pop, ploidy=1)
+# 		haps <- missingno(haps, type="loci")
+# 		# for now assume all loci are quadnucleotide repeats for testing
+# 		ssr <- rep(4, nLoc(haps))
+# 		# permanova analysis
+# 		bdist <- bruvo.dist(haps, replen=ssr)
+# 		permares <- as.data.frame(pairwise.adonis(bdist, hgsplit$Pop))
+# 		permares
+# 		})
 
 #################################
 # Outputs

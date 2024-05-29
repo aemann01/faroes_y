@@ -4,69 +4,6 @@ Shiny app: https://aemann01.shinyapps.io/mdmhistogram/
 
 Under construction! :🚧:
 
-## Faroes project mutational distance from modal haplotype
-
-```R
-library(dplyr)
-library(ggplot2)
-
-hgs <- read.table("faroes_hg_data.txt", header=T, row.names=1)
-
-# split by population and haplogroup
-hgsplit <- hgs %>% 
-	group_split(Pop,HG)
-
-for(group in 1:length(hgsplit)){
-	# pull group, remove any columns with missing values, get label for mutational distance histogram
-	dat <- hgsplit[[group]]
-	dat <- dat[,colSums(is.na(dat)) == 0]
-	title_lab <- paste(dat$Pop[1], dat$HG[1])
-	# only include numeric columns for downstream processing
-	dat <- select_if(dat, is.numeric)
-	print(paste("Calculating mutational distance histograms for: ", title_lab))
-	print(paste("Number of individuals: ", dim(dat)[1]))
-	subxlab <- paste("(n = ", dim(dat)[1], ")", sep="")
-	subxlab
-
-	# function to calculate modal value 
-	getmode <- function(v) {
-	   uniqv <- unique(v)
-	   uniqv[which.max(tabulate(match(v, uniqv)))]
-	}
-	# find modal value across all columns
-	mode <- sapply(as.data.frame(dat), function(x) getmode(x))
-  	# empty vector to populate intragroup mutational distance scores  
-  	x <- c()
-
-  	# calculate number of mutations from modal haplotype 
-  	for(row in 1:nrow(dat)){
-		temp <- rbind(dat[row,], mode) 
-		temp <- temp - as.list(temp[1,])
-		x <- c(x, sum(abs(temp[2,])))
-	}
-	
-	# save as dataframe for plotting
-	x <- as.data.frame(x)
-
-	# figure name 
-	figout <- paste(title_lab, "_hist.pdf", sep="")
-	figout <- gsub(" ", "_", figout)
-
-	# plot mutational distance histogram
-	pdf(figout)
-	ggplot(x, aes(x=x)) + 
-		geom_histogram(aes(y=after_stat(density)), binwidth=1, colour="black", fill="white") + 
-		theme_minimal() + 
-		xlab(paste("Mutational steps from mode", subxlab)) + 
-		ylab("Frequency") + 
-		ggtitle(title_lab) +
-		geom_density(bw=1, lty=2) 
-	dev.off()
-
-}
-
-```
-
 Test shiny app
 
 ```R
@@ -251,12 +188,62 @@ add.scatter.eig(ca1$eig, nf = 3, xax = 1, yax = 2, posi = "bottomright")
 dev.off()
 ```
 
+Diversity estimates
+
+```R
+library(poppr)
+# reload data to make running this block of code by itself easier 
+dat <- read.table("faroes_hg_data.FULL.txt", sep="\t", header=T, row.names=1)
+sub <- dat[, apply(dat, 2, function(x) !any(is.na(x)))]
+# first across all haplogroups
+fordiv <- sub[,1:dim(sub)[[2]]-1]
+genind <- df2genind(fordiv, sep="\t", pop=fordiv$Pop, ploidy=1)
+# get full genotypic diversity across all haplogroups
+fullgenodiv <- poppr(genind)
+# also get genotypic diversity (simpson's index) after controlling for sample size
+N <- fullgenodiv$N
+lambda <- fullgenodiv$lambda
+round((N/(N-1))*lambda, 2)
+# [1] 0.97 1.00 0.98 0.98 0.99 0.99 1.00
+
+# by haplogroup
+# R1b
+x <- sub[sub$HG == "R1b",]
+fordiv <- x[,1:dim(x)[[2]]-1]
+genind <- df2genind(fordiv, sep="\t", pop=fordiv$Pop, ploidy=1)
+fullgenodiv <- poppr(genind)
+N <- fullgenodiv$N
+lambda <- fullgenodiv$lambda
+round((N/(N-1))*lambda, 2)
+# [1] 0.94 0.99 0.98 0.97 0.98 1.00 0.99
+
+# R1a
+x <- sub[sub$HG == "R1a",]
+fordiv <- x[,1:dim(x)[[2]]-1]
+genind <- df2genind(fordiv, sep="\t", pop=fordiv$Pop, ploidy=1)
+fullgenodiv <- poppr(genind)
+N <- fullgenodiv$N
+lambda <- fullgenodiv$lambda
+round((N/(N-1))*lambda, 2)
+# [1] 0.89 0.99 1.00 0.95 0.98 1.00 0.98
+
+# I1
+x <- sub[sub$HG == "I1",]
+fordiv <- x[,1:dim(x)[[2]]-1]
+genind <- df2genind(fordiv, sep="\t", pop=fordiv$Pop, ploidy=1)
+fullgenodiv <- poppr(genind)
+N <- fullgenodiv$N
+lambda <- fullgenodiv$lambda
+round((N/(N-1))*lambda, 2)
+# [1] 0.86 0.97 0.93 0.83 0.92 0.96 0.98
+```
+
 Poppr networks
 
 ```R
 library(poppr)
 # reload data to make running this block of code by itself easier 
-dat <- read.table("faroes_hg_data.txt", sep="\t", header=T, row.names=1)
+dat <- read.table("faroes_hg_data.FULL.txt", sep="\t", header=T, row.names=1)
 sub <- dat[, apply(dat, 2, function(x) !any(is.na(x)))]
 
 ### R1b haplotype network
@@ -269,7 +256,8 @@ genind_sub <- popsub(genind, exclude = character(0))
 genind_dist <- diss.dist(genind_sub, percent = FALSE, mat = FALSE)
 
 # amova results
-amova.res <- poppr.amova(genind_sub, ~Pop, dist=genind_dist)
+Pops <- genind_sub$pop
+amova.res <- poppr.amova(genind_sub, ~Pops, dist=genind_dist, method="pegas", within=FALSE)
 # $call
 # ade4::amova(samples = xtab, distances = xdist, structures = xstruct)
 
@@ -321,6 +309,11 @@ mean(diss.dist(popsub(genind_sub,5)))
 # [1] 3.038095
 mean(diss.dist(popsub(genind_sub,6)))
 # [1] 4.4
+
+
+library(pegas)
+
+
 
 
 min_span_net <- poppr.msn(genind_sub, genind_dist, showplot = FALSE, include.ties = TRUE)
@@ -517,7 +510,11 @@ pie(dat$Tvoroyri, labels=dat$HG)
 dev.off()
 ```
 
+Test for skewness 
 
+```R
+install.packages("moments")
+library(moments)
 
 
 
