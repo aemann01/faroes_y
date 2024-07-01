@@ -1,4 +1,8 @@
-# faroes_y
+# Faroese Y Chromosome Haplogroup-Haplotype Diversity Project
+
+This repository includes scripts for analyses presented in *Mann et al. ////*
+
+[![DOI](https://zenodo.org/badge/706338579.svg)](https://zenodo.org/doi/10.5281/zenodo.12609964)
 
 Shiny app: https://aemann01.shinyapps.io/mdmhistogram/
 
