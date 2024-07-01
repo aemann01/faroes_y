@@ -2,8 +2,6 @@
 
 Shiny app: https://aemann01.shinyapps.io/mdmhistogram/
 
-Under construction! :🚧:
-
 Test shiny app
 
 ```R
@@ -509,19 +507,6 @@ pdf("hg_tvoroyri.pdf")
 pie(dat$Tvoroyri, labels=dat$HG)
 dev.off()
 ```
-
-Test for skewness 
-
-```R
-install.packages("moments")
-library(moments)
-
-
-
-
-
-
-
 
 
 
