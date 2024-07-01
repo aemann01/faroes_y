@@ -199,7 +199,7 @@ sub <- dat[, apply(dat, 2, function(x) !any(is.na(x)))]
 fordiv <- sub[,1:dim(sub)[[2]]-1]
 genind <- df2genind(fordiv, sep="\t", pop=fordiv$Pop, ploidy=1)
 # get full genotypic diversity across all haplogroups
-fullgenodiv <- poppr(genind)
+fullgenodiv <- poppr(genind, minsamp = 10)
 # also get genotypic diversity (simpson's index) after controlling for sample size
 N <- fullgenodiv$N
 lambda <- fullgenodiv$lambda
